@@ -81,7 +81,7 @@ const tableData = ref([
                 <el-table-column prop="date" label="下单时间" min-width="100"></el-table-column>
                 <el-table-column prop="pay" label="实收金额">
                 </el-table-column>
-                <el-table-column label="操作">
+                <el-table-column label="操作" align="center">
                     <el-button type="primary">
                         查看
                     </el-button>

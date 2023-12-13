@@ -47,22 +47,6 @@ const tableData = ref([
         status: '在售',
         last: '2023-11-05 '
     },
-    {
-        dishname: '鱼香肉丝',
-        image: '/src/assets/image/yxrs.jpg',
-        category: '荤菜',
-        price: 20,
-        status: '在售',
-        last: '2023-11-05 '
-    },
-    {
-        dishname: '鱼香肉丝',
-        image: '/src/assets/image/yxrs.jpg',
-        category: '荤菜',
-        price: 20,
-        status: '在售',
-        last: '2023-11-05 '
-    }
 ])
 
 </script>
@@ -104,7 +88,7 @@ const tableData = ref([
                 <el-table-column prop="last" label="最后操作时间">
                 </el-table-column>
                 <el-table-column label="操作" width="160" align="center">
-                    <el-button type="primary" size="small">
+                    <el-button type="primary" size="small" style="margin-left: 10px;">
                         修改
                     </el-button>
                     <el-button type="danger" size="small">

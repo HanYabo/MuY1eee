@@ -32,3 +32,12 @@ export const deleteEmployeeByIdAPI = (id) => {
         method: 'DELETE',
     })
 }
+
+// 根据id更新员工信息
+export const updateEmployeeByIdAPI = (id, obj) => {
+    return service({
+        url: `/employee/${id}`,
+        method: 'POST',
+        data: obj
+    })
+}

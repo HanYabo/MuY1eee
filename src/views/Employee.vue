@@ -10,12 +10,12 @@
                     <el-button round="true" type="primary" @click="findByName(insertName)">搜&nbsp;&nbsp;索</el-button>
                 </el-col>
                 <el-col :span="4" :offset="9">
-                    <el-button round="true" type="primary" @click="centerDialogVisible = true">添加员工</el-button>
+                    <el-button round="true" type="primary" @click="handleAdd">添加员工</el-button>
                 </el-col>
             </el-row>
         </div>
         <div class="emps_2">
-            <el-table :data="empList" border style="width: 100%" ref="empListRef">
+            <el-table :data="empList" border style="width: 100%">
                 <el-table-column align="center" label="员工姓名" prop="name" />
                 <el-table-column align="center" label="账号" prop="username" />
                 <el-table-column align="center" label="手机号码" prop="phone" />
@@ -61,8 +61,8 @@
                     </el-radio-group>
                 </div>
             </el-form-item>
-            <el-form-item style="margin-left: 100px;">
-                <el-button type="primary" @click="submitForm"> 保存 </el-button>
+            <el-form-item style="margin-left: 80px;">
+                <el-button type="primary" @click="submitForm">保存</el-button>
                 <el-button @click="resetForm">取消</el-button>
             </el-form-item>
         </el-form>
@@ -73,7 +73,7 @@
 import { ref, onMounted, nextTick } from 'vue'
 import { Search } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { getEmployeeListAPI, getEmployeeByNameAPI, addEmployeeAPI, deleteEmployeeByIdAPI } from '../api/employee'
+import { getEmployeeListAPI, getEmployeeByNameAPI, addEmployeeAPI, deleteEmployeeByIdAPI, updateEmployeeByIdAPI } from '../api/employee'
 
 // 分页
 const pageParam = ref({
@@ -118,22 +118,43 @@ const centerDialogVisible = ref(false)
 // form表单ref
 const formRef = ref(null)
 
-// 表单提交
+// 接收id
+const editId = ref('')
+
+// 表单提交按钮
 const submitForm = () => {
     formRef.value.validate(async valid => {
         if (valid) {
-            // 合法 新增员工
-            const { data: res } = await addEmployeeAPI(form.value)
-            if (res.code === 200) {
-                ElMessage({
-                    type: 'success',
-                    message: '新增成功'
-                })
+            // 合法 进行状态判断
+            if (isEdit.value) {
+                // 修改状态
+                const { data: res } = await updateEmployeeByIdAPI(editId.value, form.value)
+                if (res.code === 200) {
+                    ElMessage({
+                        type: 'success',
+                        message: '更新成功'
+                    })
+                } else {
+                    ElMessage({
+                        type: 'error',
+                        message: '更新失败'
+                    })
+                }
             } else {
-                ElMessage({
-                    type: 'error',
-                    message: '新增失败'
-                })
+                // 新增状态
+                title.value = '新增员工'
+                const { data: res } = await addEmployeeAPI(form.value)
+                if (res.code === 200) {
+                    ElMessage({
+                        type: 'success',
+                        message: '新增成功'
+                    })
+                } else {
+                    ElMessage({
+                        type: 'error',
+                        message: '新增失败'
+                    })
+                }
             }
             getEmployeeList()
             centerDialogVisible.value = false
@@ -143,6 +164,8 @@ const submitForm = () => {
             // 不合法 拒接表单提交
             return false
         }
+        await getEmployeeList()
+        centerDialogVisible.value = false
     })
 }
 
@@ -166,7 +189,7 @@ const deleteEmployeeById = async (id) => {
     const { data: res } = await deleteEmployeeByIdAPI(id)
     if (res.code === 200) {
         ElMessage({
-            type:'success',
+            type: 'success',
             message: '删除成功'
         })
     } else {
@@ -181,13 +204,22 @@ const deleteEmployeeById = async (id) => {
 const isEdit = ref(false)
 
 // 设置动态标题
-const title = ref('添加员工')
+const title = ref('')
+
+// 新增员工
+const handleAdd = () => {
+    title.value = '新增员工'
+    isEdit.value = false
+    editId.value = ''
+    centerDialogVisible.value = true
+}
 
 // 编辑事件
 const handleEdit = (obj) => {
-    // TODO
     isEdit.value = true
+    editId.value = obj.id
     title.value = '修改员工'
+
 
     centerDialogVisible.value = true
 
@@ -203,7 +235,9 @@ const handleDelete = (id) => {
         cancelButtonText: '取消',
         type: 'warning'
     }).then(async () => {
+        // 删除员工
         await deleteEmployeeById(id)
+        // 重新更新列表
         await getEmployeeList()
     })
 }
@@ -232,13 +266,11 @@ onMounted(() => {
 <style scoped>
 .emps {
     width: calc(100vw - 200px);
-    height: 720px;
 }
 
 .emps_1 {
     width: 100%;
     height: 80px;
-    overflow: auto;
 }
 
 .emps_2 {

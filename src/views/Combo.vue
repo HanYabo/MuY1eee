@@ -44,22 +44,6 @@ const tableData = ref([
         price: 49.9,
         status: '在售',
         last: '2023-11-05-00:00'
-    },
-    {
-        name: '肯德基全家桶',
-        image: '/src/assets/image/kfc.webp',
-        category: '无',
-        price: 49.9,
-        status: '在售',
-        last: '2023-11-05-00:00'
-    },
-    {
-        name: '肯德基全家桶',
-        image: '/src/assets/image/kfc.webp',
-        category: '无',
-        price: 49.9,
-        status: '在售',
-        last: '2023-11-05-00:00'
     }
 ])
 
@@ -103,7 +87,7 @@ const checkList = ref([])
                 <el-table-column prop="last" label="最后操作时间">
                 </el-table-column>
                 <el-table-column label="操作" width="160" align="center">
-                        <el-button type="primary" size="small">
+                        <el-button type="primary" size="small" style="margin-left: 10px;">
                             修改
                         </el-button>
                         <el-button type="danger" size="small">

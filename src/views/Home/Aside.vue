@@ -50,11 +50,11 @@
 <style scoped>
 .container {
     width: 199px;
-    height: 840px;
+    height: 100%;
     border-right: 1px solid rgb(220, 223, 230);
 }
 .left-menu {
-    height: 60px;
+    height: 838px;
     width: 200px;
     line-height: 60px;
     text-align: center;

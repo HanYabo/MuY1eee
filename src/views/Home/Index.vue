@@ -11,11 +11,7 @@
 import Header from './Header.vue'
 import Aside from './Aside.vue'
 </script>
-<style>
-* {
-    margin: 0;
-    padding: 0;
-}
+<style scoped>
 .app {
     position: relative;
 }
