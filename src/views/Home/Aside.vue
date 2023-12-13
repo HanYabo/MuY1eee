@@ -13,7 +13,7 @@ const router = useRouter()
 <template>
     <div class="container">
         <div class="left-menu">
-            <el-menu default-active="" class="el-menu-vertical-demo" router="true">
+            <el-menu default-active="" class="el-menu-vertical-demo" router>
                 <el-menu-item index="1" route="welcome">
                     <el-icon>
                         <HomeFilled />

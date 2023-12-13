@@ -6,6 +6,7 @@ import 'element-plus/dist/index.css'
 import router from './router/index.js'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'  
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
+import dayjs from 'dayjs'
 
 const app = createApp(App)
 
@@ -17,5 +18,7 @@ app.use(router)
 app.use(ElementPlus, {
   locale: zhCn
 })
+
+app.config.globalProperties.$dayjs = dayjs
 
 app.mount('#app')

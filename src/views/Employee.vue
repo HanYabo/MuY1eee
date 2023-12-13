@@ -7,10 +7,10 @@
                         :prefix-icon="Search" />
                 </el-col>
                 <el-col :span="4" :offset="1">
-                    <el-button round="true" type="primary" @click="findByName(insertName)">搜&nbsp;&nbsp;索</el-button>
+                    <el-button round type="primary" @click="findByName(insertName)">搜&nbsp;&nbsp;索</el-button>
                 </el-col>
                 <el-col :span="4" :offset="9">
-                    <el-button round="true" type="primary" @click="handleAdd">添加员工</el-button>
+                    <el-button round type="primary" @click="handleAdd">添加员工</el-button>
                 </el-col>
             </el-row>
         </div>
@@ -177,7 +177,7 @@ const resetForm = () => {
 // 根据名字查找员工
 const findByName = async (name) => {
     const res = await getEmployeeByNameAPI(name)
-    empList.value = res.data.data.list
+    empList.value = res.data.data
 }
 
 // 根据id删除员工
@@ -247,7 +247,6 @@ const closeDialog = () => {
 // 获取员工列表
 const getEmployeeList = async () => {
     const res = await getEmployeeListAPI(pageParam.value.page, pageParam.value.pageSize)
-    console.log(res)
     empList.value = res.data.data
     pageParam.value.total = res.data.total
 }
