@@ -1,11 +1,19 @@
 <script setup>
+import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+
+// route
+const route = useRoute()
+
+// router
+const router = useRouter()
 
 </script>
 
 <template>
     <div class="container">
         <div class="left-menu">
-            <el-menu default-active="1" class="el-menu-vertical-demo" router="true">
+            <el-menu default-active="" class="el-menu-vertical-demo" router="true">
                 <el-menu-item index="1" route="welcome">
                     <el-icon>
                         <HomeFilled />

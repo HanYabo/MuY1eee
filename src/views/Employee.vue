@@ -82,6 +82,9 @@ const pageParam = ref({
     total: 0
 })
 
+// 员工列表
+const empList = ref([])
+
 // 切页触发事件
 const handleCurrentChange = (val) => {
     pageParam.value.page = val
@@ -156,10 +159,6 @@ const submitForm = () => {
                     })
                 }
             }
-            getEmployeeList()
-            centerDialogVisible.value = false
-            // 清除表单
-            formRef.value.resetFields()
         } else {
             // 不合法 拒接表单提交
             return false
@@ -178,10 +177,7 @@ const resetForm = () => {
 // 根据名字查找员工
 const findByName = async (name) => {
     const res = await getEmployeeByNameAPI(name)
-    // 使用过滤器进行筛选（比较简易）
-    empList.value = empList.value.filter((item) => {
-        return item.name === res.data.name
-    })
+    empList.value = res.data.data.list
 }
 
 // 根据id删除员工
@@ -224,7 +220,7 @@ const handleEdit = (obj) => {
     centerDialogVisible.value = true
 
     nextTick(() => {
-        form.value = obj
+        form.value = {...obj}
     })
 }
 
@@ -244,16 +240,14 @@ const handleDelete = (id) => {
 
 // 关闭对话框
 const closeDialog = () => {
-    console.log('123123123')
     formRef.value.resetFields()
 }
 
-// 员工列表
-const empList = ref([])
 
 // 获取员工列表
 const getEmployeeList = async () => {
     const res = await getEmployeeListAPI(pageParam.value.page, pageParam.value.pageSize)
+    console.log(res)
     empList.value = res.data.data
     pageParam.value.total = res.data.total
 }
