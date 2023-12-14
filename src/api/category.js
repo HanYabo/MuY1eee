@@ -14,3 +14,12 @@ export const deleteCategoryByIdAPI = (id) => {
         method: 'DELETE'
     })
 }
+
+// 新增分类
+export const addCategoryByTypeAPI = (type, obj) => {
+    return service({
+        url: `/category/${type}`,
+        method: 'PUT',
+        data: obj
+    })
+}

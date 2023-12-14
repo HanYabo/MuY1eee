@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getCategoryListAPI, deleteCategoryByIdAPI } from '../api/category'
+import { getCategoryListAPI, deleteCategoryByIdAPI, addCategoryByTypeAPI } from '../api/category'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
-const action = ref('')
+
 
 // 分页条件
 const pageParam = ref({
@@ -54,30 +54,104 @@ const handleDelete = (id) => {
   })
 }
 
-
-const classData = ref({
-  title: '添加菜品',
-  dialogVisible: false,
-  categoryId: '',
+// 表单数据
+const form = ref({
   name: '',
-  sort: ''
+  sort: 0
 })
+
+// 对话框
+const dialogVisible = ref(false)
+
+// 设置动态标题
+const title = ref('')
+
+// 设置类型
+const type = ref(1)
+
+// formRef
+const formRef = ref(null)
+
+// 新增菜品分类按钮
+const addCategory = () => {
+  title.value = '新增菜品'
+  type.value = 1
+  dialogVisible.value = true
+
+
+}
+
+// 新增套餐分类按钮
+const addCambo = () => {
+  title.value = '新增套餐'
+  type.value = 2
+  dialogVisible.value = true
+}
+
+// 表单校验规则
+const rules = ref({
+  name: [
+    { required: true, message: '请输入分类名称', trigger: 'blur' }
+  ],
+  sort: [
+    { required: true, message: '请输入排序', trigger: 'blur' }
+  ]
+})
+
+// 新增分类方法
+const addCategoryByType = async () => {
+  const { data: res } = await addCategoryByTypeAPI(type.value, form.value)
+  if(res.code === 200) {
+    ElMessage({
+      type:'success',
+      message: '新增成功'
+    })
+  }else {
+    ElMessage({
+      type:'error',
+      message: '新增失败'
+    })
+  }
+}
+
+// 表单提交
+const submitForm = () => {
+  formRef.value.validate(valid => {
+    if(valid) {
+      // 合法
+      addCategoryByType()
+      // 刷新列表
+      getCategoryList()
+      dialogVisible.value = false
+    }else {
+      return false
+    }
+  })
+}
+
+// 重置表单
+const resetForm = () => {
+  formRef.value.resetFields()
+  dialogVisible.value = false
+}
 
 
 // pageSize改变事件
 const handleSizeChange = (val) => {
   pageParam.value.pageSize = val
+  getCategoryList()
 }
 
 // 当前页改变事件
 const handleCurrentChange = (val) => {
   pageParam.value.page = val
+  getCategoryList()
 }
 
 // 对话框关闭事件
 const handleClose = () => {
-  console.log('dialog is gonna close')
-  classData.value.dialogVisible = false
+  formRef.value.resetFields()
+  form.value.dialogVisible = false
 }
 
 onMounted(() => {
@@ -90,10 +164,10 @@ onMounted(() => {
   <div class="dashboard-container" id="category-app">
     <div class="container">
       <div class="tableBar" style="display: inline-block">
-        <el-button type="primary" @click="classData.dialogVisible = true">
+        <el-button type="primary" @click="addCategory">
           + 新增菜品分类
         </el-button>
-        <el-button type="primary" @click="classData.dialogVisible = true">
+        <el-button type="primary" @click="addCambo">
           + 新增套餐分类
         </el-button>
       </div>
@@ -122,20 +196,20 @@ onMounted(() => {
         layout="total, sizes, prev, pager, next, jumper" :total="pageParam.total" @size-change="handleSizeChange"
         @current-change="handleCurrentChange"></el-pagination>
     </div>
-    <el-dialog :title="classData.title" v-model="classData.dialogVisible" width="30%" @close="handleClose">
-      <el-form class="demo-form-inline" label-width="100px">
-        <el-form-item label="分类名称：">
-          <el-input v-model="classData.name" placeholder="请输入分类名称" maxlength="14" />
+
+    <!-- 添加对话框 -->
+    <el-dialog :title="title" v-model="dialogVisible" width="30%" @close="handleClose">
+      <el-form class="demo-form-inline" label-width="100px" :model="form" :rules="rules" ref="formRef">
+        <el-form-item label="分类名称："> 
+          <el-input v-model="form.name" placeholder="请输入分类名称" maxlength="14" />
         </el-form-item>
         <el-form-item label="排序：">
-          <el-input v-model="classData.sort" type="number" placeholder="请输入排序" />
+          <el-input v-model="form.sort" type="number" placeholder="请输入排序" />
         </el-form-item>
       </el-form>
-      <span slot="footer" class="dialog-footer" style="margin-left: 100px;">
-        <el-button size="medium" @click="classData.dialogVisible = false">取 消</el-button>
-        <el-button type="primary" size="medium" @click="submitForm">确 定</el-button>
-        <el-button v-if="action != 'edit'" type="primary" size="medium" class="continue" @click="submitForm('go')">
-          保存并继续添加 </el-button>
+      <span slot="footer" class="dialog-footer" style="margin-left: 160px;">
+        <el-button  @click="resetForm">取 消</el-button>
+        <el-button type="primary" @click="submitForm">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -147,10 +221,6 @@ onMounted(() => {
   .tableBar {
     margin-left: 20px;
     margin-top: 20px;
-  }
-
-  .pageList {
-    margin-top: 300px;
   }
 }
 </style>
