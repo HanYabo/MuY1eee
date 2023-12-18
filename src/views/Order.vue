@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref } from 'vue'
 import { getOrderListAPI } from '../api/order'
+import { getOrderStatus } from '../constants/OrderStatus'
 
 // 订单列表
 const orderList = ref([])
@@ -26,12 +27,15 @@ onMounted(() => {
                 </el-input>
                 <el-date-picker v-model="orderTime" clearable value-format="yyyy-MM-dd HH:mm:ss" type="datetimerange"
                     placeholder="选择日期" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"
-                    :default-time="['00:00:00', '23:59:59']" style="width: 400px;margin-left: 20px;"></el-date-picker>
+                    :default-time="['00:00:00', '23:59:59']" style="width: 400px; margin-left: 20px;"></el-date-picker>
                 <el-button type="primary" class="search-btn" @click="init">查询</el-button>
             </div>
             <el-table :data="orderList" stripe class="tableBox">
                 <el-table-column prop="number" label="订单号" min-width="110"></el-table-column>
                 <el-table-column prop="status" label="订单状态">
+                    <template #default="{ row }">
+                        <span>{{ getOrderStatus(row.status) }}</span>
+                    </template>
                 </el-table-column>
                 <el-table-column prop="userId" label="用户"></el-table-column>
                 <el-table-column prop="phone" label="手机号"></el-table-column>
@@ -103,6 +107,7 @@ onMounted(() => {
 .dashboard-container {
     width: calc(100vw - 200px);
 }
+
 
 .tableBar {
     margin-top: 20px;
