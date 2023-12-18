@@ -4,7 +4,6 @@ import { getDishListAPI } from '../api/dish'
 
 
 const input = ref('')
-const counts = ref(0)
 
 // 分页条件
 const pageParam = ref({
@@ -13,6 +12,7 @@ const pageParam = ref({
     total: 0
 })
 
+// 菜品列表
 const dishList = ref([])
 
 // 获取菜品列表
@@ -20,6 +20,18 @@ const getDishList = async () => {
     const { data: res } = await getDishListAPI(pageParam.value.page, pageParam.value.pageSize)
     dishList.value = res.data
     pageParam.value.total = res.total
+}
+
+// 分页大小改变事件
+const handleSizeChange = (val) => {
+    pageParam.value.pageSize = val
+    getDishList()
+}
+
+// 分页切换事件
+const handleCurrentChange = (val) => {
+    pageParam.value.page = val
+    getDishList()
 }
 
 onMounted(() => {
@@ -54,7 +66,7 @@ onMounted(() => {
                         <img :src="row.image" style="width: 100px;height: 100px" />
                     </template>
                 </el-table-column>
-                <el-table-column prop="" label="菜品分类"></el-table-column>
+                <el-table-column prop="categoryId" label="菜品分类"></el-table-column>
                 <el-table-column label="售价">
                     <template #default="{ row }">
                         {{ '￥' + row.price }}
@@ -63,31 +75,38 @@ onMounted(() => {
                 <el-table-column prop="status" label="售卖状态">
                 </el-table-column>
                 <el-table-column prop="updateTime" label="最后操作时间">
+                    <template #default="{ row }">
+                        <span>{{ $dayjs(row.updateTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                    </template>
                 </el-table-column>
-                <el-table-column label="操作" width="160" align="center">
+                <el-table-column label="操作" width="100" align="center">
                     <el-button type="primary" size="small" style="margin-left: 10px;">
                         修改
                     </el-button>
                     <el-button type="danger" size="small">
                         删除
                     </el-button>
-                    <el-button type="primary" size="small">
+                    <el-button type="success" size="small">
                         起售
                     </el-button>
-                    <el-button type="primary" size="small">
+                    <el-button type="info" size="small">
                         停售
                     </el-button>
                 </el-table-column>
             </el-table>
             <el-pagination class="pageList" :page-sizes="[10, 20, 30, 40]" :page-size="pageParam.pageSize"
                 layout="total, sizes, prev, pager, next, jumper" :total="pageParam.total" @size-change="handleSizeChange"
-                :current-page.sync="page" @current-change="handleCurrentChange"></el-pagination>
+                :current-page.sync="page" @current-change="handleCurrentChange" style="margin: 20px 0 20px 0;"></el-pagination>
         </div>
     </div>
 </template>
 
-<style scoped>
+<style scpoed>
 .dashboard-container {
     width: calc(100vw - 200px);
+}
+.tableBar {
+    margin-top: 20px;
+    margin-left: 20px;
 }
 </style>

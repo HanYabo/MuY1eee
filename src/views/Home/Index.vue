@@ -14,6 +14,7 @@ import Aside from './Aside.vue'
 <style scoped>
 .app {
     position: relative;
+    overflow-x: hidden;
 }
 .content {
     position: absolute;

@@ -1,61 +1,19 @@
 <script setup>
-import { ref } from 'vue'
-const tableData = ref([
-    {
-        number: '100020231001',
-        status: '已完成',
-        user: 'zhangsan',
-        phone: '100000000',
-        address: '北京市海淀区',
-        date: '2023-11-05 00:00',
-        pay: '￥39.0'
-    },
-    {
-        number: '100020231001',
-        status: '已完成',
-        user: 'zhangsan',
-        phone: '100000000',
-        address: '北京市海淀区',
-        date: '2023-11-05 00:00',
-        pay: '￥39.0'
-    },
-    {
-        number: '100020231001',
-        status: '已完成',
-        user: 'zhangsan',
-        phone: '100000000',
-        address: '北京市海淀区',
-        date: '2023-11-05 00:00',
-        pay: '￥39.0'
-    },
-    {
-        number: '100020231001',
-        status: '已完成',
-        user: 'zhangsan',
-        phone: '100000000',
-        address: '北京市海淀区',
-        date: '2023-11-05 00:00',
-        pay: '￥39.0'
-    },
-    {
-        number: '100020231001',
-        status: '已完成',
-        user: 'zhangsan',
-        phone: '100000000',
-        address: '北京市海淀区',
-        date: '2023-11-05 00:00',
-        pay: '￥39.0'
-    },
-    {
-        number: '100020231001',
-        status: '已完成',
-        user: 'zhangsan',
-        phone: '100000000',
-        address: '北京市海淀区',
-        date: '2023-11-05 00:00',
-        pay: '￥39.0'
-    }
-])
+import { onMounted, ref } from 'vue'
+import { getOrderListAPI } from '../api/order'
+
+// 订单列表
+const orderList = ref([])
+
+// 查询订单列表
+const getOrderList = async () => {
+    const { data: res } = await getOrderListAPI()
+    orderList.value = res.data
+}
+
+onMounted(() => {
+    getOrderList()
+})
 </script>
 
 <template>
@@ -71,26 +29,31 @@ const tableData = ref([
                     :default-time="['00:00:00', '23:59:59']" style="width: 400px;margin-left: 20px;"></el-date-picker>
                 <el-button type="primary" class="search-btn" @click="init">查询</el-button>
             </div>
-            <el-table :data="tableData" stripe class="tableBox">
+            <el-table :data="orderList" stripe class="tableBox">
                 <el-table-column prop="number" label="订单号" min-width="110"></el-table-column>
                 <el-table-column prop="status" label="订单状态">
                 </el-table-column>
-                <el-table-column prop="user" label="用户"></el-table-column>
+                <el-table-column prop="userId" label="用户"></el-table-column>
                 <el-table-column prop="phone" label="手机号"></el-table-column>
                 <el-table-column prop="address" label="地址" show-overflow-tooltip></el-table-column>
-                <el-table-column prop="date" label="下单时间" min-width="100"></el-table-column>
-                <el-table-column prop="pay" label="实收金额">
+                <el-table-column prop="orderTime" label="下单时间" min-width="100">
+                    <template #default="{ row }">
+                        <span>{{ $dayjs(row.orderTime).format('YYYY-MM-DD HH:mm:ss') }}</span>
+                    </template>
                 </el-table-column>
-                <el-table-column label="操作" align="center">
-                    <el-button type="primary">
+                <el-table-column prop="amount" label="实收金额">
+                    <template #default="{ row }">
+                        <span>{{ '￥' + row.amount.toFixed(2) }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" align="center" width="100">
+                    <el-button type="primary" size="small" style="margin-left: 10px;">
                         查看
                     </el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button type="success">
+                    <el-button type="warning" size="small">
                         派送
                     </el-button>
-                    <el-divider direction="vertical"></el-divider>
-                    <el-button type="primary">
+                    <el-button type="success" size="small">
                         完成
                     </el-button>
                 </el-table-column>
@@ -139,6 +102,11 @@ const tableData = ref([
 <style scoped>
 .dashboard-container {
     width: calc(100vw - 200px);
+}
+
+.tableBar {
+    margin-top: 20px;
+    margin-left: 20px;
 }
 
 .search-btn {

@@ -1,9 +1,7 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { getCategoryListAPI, deleteCategoryByIdAPI, addCategoryByTypeAPI } from '../api/category'
+import { ref, onMounted, nextTick } from 'vue'
+import { getCategoryListAPI, deleteCategoryByIdAPI, addCategoryByTypeAPI, updateCategoryByIdAPI } from '../api/category'
 import { ElMessage, ElMessageBox } from 'element-plus'
-
-
 
 // 分页条件
 const pageParam = ref({
@@ -47,12 +45,48 @@ const handleDelete = (id) => {
     await getCategoryList()
   })
   .catch(() => {
-    ElMessage({
-      type: 'error',
-      message: '删除失败'
-    })
+    console.log('取消删除')
   })
 }
+
+// 修改分类
+const updateCategoryById = async () => {
+  const { data: res } = await updateCategoryByIdAPI(form.value)
+  if(res.code === 200) {
+    ElMessage({
+      type:'success',
+      message: '修改成功'
+    })
+    editDialogVisible.value = false
+  }else {
+    ElMessage({
+      type: 'error',
+      message: '修改失败'
+    })
+  }
+}
+
+// 修改事件
+const handleEdit = (obj) => {
+  editDialogVisible.value = true
+
+  nextTick(() => {
+    form.value = obj
+  })
+} 
+
+// 修改提交按钮
+const confirmEdit = () => {
+  editRef.value.validate(async valid => {
+    if(valid) {
+      await updateCategoryById()
+      await getCategoryList()
+    }else {
+      return false
+    }
+  })
+}
+
 
 // 表单数据
 const form = ref({
@@ -76,15 +110,21 @@ const formRef = ref(null)
 const addCategory = () => {
   title.value = '新增菜品'
   type.value = 1
+  form.value = {
+    name: '',
+    sort: 0
+  }
   dialogVisible.value = true
-
-
 }
 
 // 新增套餐分类按钮
 const addCambo = () => {
   title.value = '新增套餐'
   type.value = 2
+  form.value = {
+    name: '',
+    sort: 0
+  }
   dialogVisible.value = true
 }
 
@@ -154,6 +194,23 @@ const handleClose = () => {
   form.value.dialogVisible = false
 }
 
+// 修改对话框
+const editDialogVisible = ref(false)
+
+// 修改表单ref
+const editRef = ref(null)
+
+// 修改对话框关闭
+const cancelEdit = () => {
+  editRef.value.resetFields()
+  editDialogVisible.value = false
+}
+
+const handleEditDialogClose = () => {
+  editRef.value.resetFields()
+  editDialogVisible.value = false
+}
+
 onMounted(() => {
   getCategoryList()
 })
@@ -183,7 +240,7 @@ onMounted(() => {
         <el-table-column prop="sort" label="排序" />
         <el-table-column label="操作" width="160" align="center">
           <template #default="{ row }">
-            <el-button type="primary" size="small">
+            <el-button type="primary" size="small" @click="handleEdit(row)">
             修改
           </el-button>
           <el-button type="danger" size="small" @click="handleDelete(row.id)">
@@ -192,9 +249,9 @@ onMounted(() => {
           </template>
         </el-table-column>
       </el-table>
-      <el-pagination class="pageList" :page-sizes="[10, 15]" :page-size="pageParam.pageSize"
+      <el-pagination class="pageList" :page-sizes="[10, 15, 20]" :page-size="pageParam.pageSize"
         layout="total, sizes, prev, pager, next, jumper" :total="pageParam.total" @size-change="handleSizeChange"
-        @current-change="handleCurrentChange"></el-pagination>
+        @current-change="handleCurrentChange" style="margin: 20px 0 20px 0;"></el-pagination>
     </div>
 
     <!-- 添加对话框 -->
@@ -210,6 +267,28 @@ onMounted(() => {
       <span slot="footer" class="dialog-footer" style="margin-left: 160px;">
         <el-button  @click="resetForm">取 消</el-button>
         <el-button type="primary" @click="submitForm">确 定</el-button>
+      </span>
+    </el-dialog>
+
+    <!-- 修改对话框 -->
+    <el-dialog title="修改分类" v-model="editDialogVisible" width="30%" @close="handleEditDialogClose">
+      <el-form class="demo-form-inline" label-width="100px" :model="form" ref="editRef">
+        <el-form-item label="分类名称："> 
+          <el-input v-model="form.name" placeholder="请输入分类名称" maxlength="14" />
+        </el-form-item>
+        <el-form-item label="分类类型：">
+          <el-select v-model="form.type" placeholder="请选择分类" size="default">
+            <el-option :label="菜品分类" :value="1">菜品分类</el-option>
+            <el-option :label="套餐分类" :value="2">套餐分类</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="排序：">
+          <el-input v-model="form.sort" type="number" placeholder="请输入排序" />
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer" style="margin-left: 160px;">
+        <el-button  @click="cancelEdit">取 消</el-button>
+        <el-button type="primary" @click="confirmEdit">确 定</el-button>
       </span>
     </el-dialog>
   </div>

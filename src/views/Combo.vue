@@ -86,24 +86,24 @@ const checkList = ref([])
                 </el-table-column>
                 <el-table-column prop="last" label="最后操作时间">
                 </el-table-column>
-                <el-table-column label="操作" width="160" align="center">
+                <el-table-column label="操作" width="100" align="center">
                         <el-button type="primary" size="small" style="margin-left: 10px;">
                             修改
                         </el-button>
                         <el-button type="danger" size="small">
                             删除
                         </el-button>
-                        <el-button type="primary" size="small">
+                        <el-button type="success" size="small">
                             起售
                         </el-button>
-                        <el-button type="primary" size="small">
+                        <el-button type="info" size="small">
                             停售
                         </el-button>
                 </el-table-column>
             </el-table>
             <el-pagination class="pageList" :page-sizes="[10, 20, 30, 40]" :page-size="pageSize"
                 layout="total, sizes, prev, pager, next, jumper" :total="counts" @size-change="handleSizeChange"
-                :current-page.sync="page" @current-change="handleCurrentChange"></el-pagination>
+                :current-page.sync="page" @current-change="handleCurrentChange" style="margin: 20px 0 20px 0;"></el-pagination>
         </div>
     </div>
 </template>
@@ -111,5 +111,10 @@ const checkList = ref([])
 <style scoped>
 .dashboard-container {
     width: calc(100vw - 200px);
+}
+
+.tableBar {
+    margin-top: 20px;
+    margin-left: 20px;
 }
 </style>
