@@ -2,10 +2,12 @@
 import { ElMessage } from 'element-plus';
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { checkUserAPI } from '../api/login'
 
 const router = useRouter()
 const ruleFormRef = ref(null)
-const ruleForm = reactive({
+
+const ruleForm = ref({
     username: '',
     password: ''
 })
@@ -22,14 +24,25 @@ const rules = ref({
 
 const submitForm = () => {
     if (!ruleFormRef.value) return;
-    ruleFormRef.value.validate((valid) => {
+    ruleFormRef.value.validate(async (valid) => {
         if (valid) {
             // 校验通过 放行
-            ElMessage({
-                message: '登录成功！',
-                type: 'success'
-            })
-            router.push('/home')
+            // TODO 调用接口 校验账号密码是否正确
+            const { data: res } = await checkUserAPI(ruleForm.value)
+            if (res.code === 200) {
+                // 登录成功
+                ElMessage({
+                    message: '登录成功！',
+                    type: 'success'
+                })
+                // 跳转到主页
+                router.push('/home')
+            } else {
+                ElMessage({
+                    type: 'error',
+                    message: res.message
+                })
+            }
         } else {
             return false;
         }
@@ -87,6 +100,7 @@ const submitForm = () => {
     justify-content: center;
     align-content: center;
 }
+
 .btn {
     display: flex;
     margin-top: 30px;
