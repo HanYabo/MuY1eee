@@ -67,7 +67,7 @@ const handleDelete = async (id) => {
     }
 }
 
-// 更新事件
+// 修改事件
 const handleUpdate = (obj) => {
     dialogFormVisible.value = true
     form.value = obj
@@ -112,6 +112,12 @@ const handleConfirm = () => {
     dialogFormVisible.value = false
 }
 
+// 取消按钮
+const handleCancel = () => {
+    formRef.value.resetFields()
+    dialogFormVisible.value = false
+}
+
 onMounted(() => {
     getDishList()
     categoryStore.getCategoryList()
@@ -123,8 +129,7 @@ onMounted(() => {
     <div class="dashboard-container" id="food-app">
         <div class="container">
             <div class="tableBar">
-                <el-input v-model="input" placeholder="请输入菜品名称" style="width: 250px" clearable
-                    @keyup.enter.native="handleQuery">
+                <el-input v-model="input" placeholder="请输入菜品名称" style="width: 250px" clearable>
                     <i slot="prefix" class="el-input__icon el-icon-search" style="cursor: pointer" @click="init"></i>
                 </el-input>
                 <div class="tableLab">
@@ -147,7 +152,7 @@ onMounted(() => {
                 </el-table-column>
                 <el-table-column prop="categoryId" label="菜品分类">
                     <template #default="{ row }">
-                        <span>{{ categoryStore.getCategoryNameById(row.id) }}</span>
+                        <span>{{ categoryStore.getCategoryNameById(row.categoryId) }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column label="售价" prop="price">
@@ -210,12 +215,12 @@ onMounted(() => {
                         <el-input type="textarea" v-model="form.description" placeholder="请输入菜品描述" />
                     </el-form-item>
                     <el-form-item label="菜品排序" label-width="200px">
-                        <el-input-number v-model="form.sort" :min="0" @change="handleChange" />
+                        <el-input-number v-model="form.sort" :min="0" />
                     </el-form-item>
                 </el-form>
                 <template #footer>
                     <span class="dialog-footer">
-                        <el-button @click="dialogFormVisible = false">取消</el-button>
+                        <el-button @click="handleCancel">取消</el-button>
                         <el-button type="primary" @click="handleConfirm">
                             确定
                         </el-button>

@@ -2,9 +2,6 @@
 import { useRoute } from 'vue-router'
 import { useRouter } from 'vue-router'
 
-// route
-const route = useRoute()
-
 // router
 const router = useRouter()
 
@@ -13,38 +10,38 @@ const router = useRouter()
 <template>
     <div class="container">
         <div class="left-menu">
-            <el-menu default-active="welcome" class="el-menu-vertical-demo" router>
-                <el-menu-item index="1" route="/welcome">
+            <el-menu :default-active="router.currentRoute.value.path" class="el-menu-vertical-demo" router>
+                <el-menu-item index="/welcome">
                     <el-icon>
                         <HomeFilled />
                     </el-icon>
-                    <span>欢迎</span>
+                    <span>系统首页</span>
                 </el-menu-item>
-                <el-menu-item index="2" route="/emp">
+                <el-menu-item index="/emp">
                     <el-icon>
                         <Avatar />
                     </el-icon>
                     <span>员工管理</span>
                 </el-menu-item>
-                <el-menu-item index="3" route="/category">
+                <el-menu-item index="/category">
                     <el-icon>
                         <Menu />
                     </el-icon>
                     <span>分类管理</span>
                 </el-menu-item>
-                <el-menu-item index="4" route="/dish">
+                <el-menu-item index="/dish">
                     <el-icon>
                         <Dish />
                     </el-icon>
                     <span>菜品管理</span>
                 </el-menu-item>
-                <el-menu-item index="5" route="/combo">
+                <el-menu-item index="/combo">
                     <el-icon>
                         <Bowl />
                     </el-icon>
                     <span>套餐管理</span>
                 </el-menu-item>
-                <el-menu-item index="6" route="/order">
+                <el-menu-item index="/order">
                     <el-icon>
                         <Management />
                     </el-icon>
