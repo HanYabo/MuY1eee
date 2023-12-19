@@ -1,6 +1,6 @@
 <script setup>
 import { ElMessage } from 'element-plus';
-import { reactive, ref } from 'vue'
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { checkUserAPI } from '../api/login'
 

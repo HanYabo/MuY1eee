@@ -7,6 +7,10 @@ import router from './router/index.js'
 import * as ElementPlusIconsVue from '@element-plus/icons-vue'  
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs'
 import dayjs from 'dayjs'
+import { createPinia } from 'pinia'
+
+const pinia = createPinia()
+
 
 const app = createApp(App)
 
@@ -18,6 +22,7 @@ app.use(router)
 app.use(ElementPlus, {
   locale: zhCn
 })
+app.use(pinia)
 
 app.config.globalProperties.$dayjs = dayjs
 

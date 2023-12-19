@@ -249,4 +249,9 @@ onMounted(() => {
     flex: 1;
     color: #333333;
 }
+
+.pageList {
+    margin-top: 20px;
+    margin-left: 20px;
+}
 </style>

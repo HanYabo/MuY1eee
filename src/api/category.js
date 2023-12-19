@@ -1,5 +1,13 @@
 import service from '../util/request'
 
+// 查询全部分类列表
+export const getAllCategoryListAPI = () => { 
+    return service({
+        url: '/category',
+        method: 'GET'
+    })
+}
+
 // 获取分类列表
 export const getCategoryListAPI = (index, size) => {
     return service({

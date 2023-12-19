@@ -1,7 +1,10 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
-import { getCategoryListAPI, deleteCategoryByIdAPI, addCategoryByTypeAPI, updateCategoryByIdAPI } from '../api/category'
+import { getCategoryListAPI, deleteCategoryByIdAPI, addCategoryByTypeAPI, updateCategoryByIdAPI, getAllCategoryListAPI } from '../api/category'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { useCategoryStore } from '../store/category'
+
+const categoryStore = useCategoryStore()
 
 // 分页条件
 const pageParam = ref({
@@ -15,9 +18,12 @@ const categoryList = ref([])
 
 // 查询分类列表
 const getCategoryList = async () => {
-  const res = await getCategoryListAPI(pageParam.value.page, pageParam.value.pageSize)
-  categoryList.value = res.data.data
-  pageParam.value.total = res.data.total
+  const { data: res } = await getCategoryListAPI(pageParam.value.page, pageParam.value.pageSize)
+  categoryList.value = res.data
+  // 写入store（全部查询）
+  const { data: result } = await getAllCategoryListAPI()
+  categoryStore.categoryList.value = result.data
+  pageParam.value.total = res.total
 }
 
 // 根据id删除分类
